@@ -133,6 +133,7 @@ import {
 } from "./project-conf";
 import { clearPreviousIdfSetups } from "./setup/existingIdfSetups";
 import { getEspRainmaker } from "./rainmaker/download/espRainmakerDownload";
+import { downloadEspIdf, useExistingEspIdfJsonSetup } from "./setup/cmd";
 
 // Global variables shared by commands
 let workspaceRoot: vscode.Uri;
@@ -1990,6 +1991,14 @@ export async function activate(context: vscode.ExtensionContext) {
         Logger.errorNotify(error.message, error);
       }
     });
+  });
+
+  registerIDFCommand("espIdf.installEspIdf", async () => {
+    await downloadEspIdf(context.extensionUri);
+  });
+
+  registerIDFCommand("espIdf.useEspIdfJsonSetup", async () => {
+    await useExistingEspIdfJsonSetup();
   });
 
   registerIDFCommand("espIdf.importProject", async () => {
