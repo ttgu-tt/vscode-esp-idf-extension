@@ -1,3 +1,22 @@
+<script setup lang="ts">
+import { storeToRefs } from "pinia";
+import { onMounted } from "vue";
+import { useExamplesStore } from "./store";
+
+const store = useExamplesStore();
+
+const {
+  exampleRootPath,
+  exampleDetail,
+  hasExampleDetail,
+  selectedExample,
+} = storeToRefs(store);
+
+onMounted(() => {
+  store.getExamplesList();
+});
+</script>
+
 <template>
   <div id="examples-window">
     <div id="sidenav" class="content">
@@ -10,7 +29,7 @@
       <div v-if="hasExampleDetail" class="has-text-centered">
         <button
           v-if="selectedExample.name !== ''"
-          v-on:click="openExample(selectedExample)"
+          v-on:click="store.openExample(selectedExample)"
           class="button"
           id="create-button"
         >
@@ -25,49 +44,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
-import { Action, Mutation, State } from "vuex-class";
-import { IExample } from "../../examples/Example";
-import ExampleList from "./components/exampleList.vue";
-
-@Component({
-  components: {
-    ExampleList,
-  },
-})
-export default class Examples extends Vue {
-  @State("exampleRootPath") private storeExampleRootPath;
-  @State("exampleDetail") private storeExampleDetail;
-  @State("hasExampleDetail") private hasExampleDetail;
-  @State("selectedExample") private storeSelectedExample;
-  @Action("openExample") private storeOpenExample;
-  @Action private getExamplesList;
-
-  get selectedExample() {
-    return this.storeSelectedExample;
-  }
-  get exampleRootPath() {
-    return this.storeExampleRootPath;
-  }
-  get exampleDetail() {
-    return this.storeExampleDetail;
-  }
-
-  public openExample(selectedExample: IExample) {
-    this.storeOpenExample({
-      pathToOpen: selectedExample.path,
-      name: selectedExample.name,
-    });
-  }
-
-  public created() {
-    this.getExamplesList();
-  }
-}
-</script>
 
 <style lang="scss">
 @import "../commons/espCommons.scss";
